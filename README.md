@@ -1,0 +1,5 @@
+## Deplee
+
+```
+npm i deplee
+```
