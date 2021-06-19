@@ -1,5 +1,5 @@
 ## Deplee
 
 ```
-npm i deplee
+npm i deplee --save
 ```
