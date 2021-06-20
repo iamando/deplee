@@ -1,12 +1,17 @@
+#! /usr/bin/env node
+
 /* eslint-disable quotes */
 const inquirer = require("inquirer");
 const fs = require("fs");
 const path = require("path");
 
 // lib
-const nodeExpress = require("./lib/nodeExpress");
+const nodeExpress = require("../lib/nodeExpress");
+const staticConfig = require("../lib/static");
+const frontEndFramwork = require("../lib/frontEndFramwork");
 
-const existingConfig = fs.existsSync("deplee.json");
+const depleePath = path.join(process.cwd(), "deplee.json");
+const existingConfig = fs.existsSync(depleePath);
 
 async function buildConfig() {
   let config = {
@@ -31,7 +36,6 @@ async function buildConfig() {
         "react",
         "vue",
         "angular",
-        "lambda",
       ],
     },
   ]);
@@ -41,15 +45,53 @@ async function buildConfig() {
   switch (answers.type) {
     case "node-express":
       config = await nodeExpress(config);
-      console.log(config);
       break;
 
     case "static":
-      console.log("Static...");
+      config = await staticConfig(config);
+      break;
+
+    case "static-build":
+      config = await frontEndFramwork(config);
+      break;
+
+    case "react":
+      config = await frontEndFramwork(config, "build");
+      break;
+
+    case "vue":
+      config = await frontEndFramwork(config);
+      break;
+
+    case "angular":
+      config = await frontEndFramwork(config, "build");
       break;
   }
 
-  console.log(config);
+  const moreAnswers = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "specifyAlias",
+      message: "Would you like to specify an alias?",
+      default: true,
+    },
+    {
+      type: "text",
+      name: "alias",
+      message: "What is the alias? (Specify multiple separated by commas.)",
+      default: answers.name,
+      when: (a) => a.specifyAlias,
+    },
+  ]);
+
+  config.alias = moreAnswers.alias
+    ? moreAnswers.alias.split(",").map((a) => a.trim())
+    : undefined;
+
+  fs.writeFileSync(depleePath, JSON.stringify(config, null, 2), "utf8");
+
+  console.log("All done! Type deplee to deploy!");
+  process.exit(0);
 }
 
 if (existingConfig) {
@@ -66,6 +108,7 @@ if (existingConfig) {
       if (answers.overwrite) {
         buildConfig();
       } else {
+        // eslint-disable-next-line no-console
         console.log("GoodBye!");
       }
     });

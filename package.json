@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A CLI to help generate a deplee.sh configuration file.",
   "main": "src/main.js",
+  "bin": "src/main.js",
   "scripts": {
     "test": "jest",
     "lint": "eslint src/"
