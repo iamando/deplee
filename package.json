@@ -1,10 +1,11 @@
 {
   "name": "deplee",
   "version": "1.0.0",
-  "description": "CLI Deploy with Node JS",
-  "main": "main.js",
+  "description": "A CLI to help generate a deplee.sh configuration file.",
+  "main": "src/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "lint": "eslint src/"
   },
   "keywords": [
     "CLI",
@@ -17,6 +18,8 @@
     "url": "https://github.com/iamando/deplee.git"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
     "fs": "^0.0.1-security",
     "fs-extra": "^10.0.0",
     "inquirer": "^8.1.1",
